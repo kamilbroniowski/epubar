@@ -14,7 +14,8 @@ def create_app(test_config=None):
     # Load default configuration
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE_URL=os.environ.get('DATABASE_URL', 'sqlite:///data/epubar.db'),
+        SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL', 'sqlite:///data/epubar.db'),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
         UPLOAD_FOLDER=os.path.join(os.getcwd(), 'uploads'),
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload size
     )

@@ -16,7 +16,8 @@ def app():
     
     app = create_app({
         'TESTING': True,
-        'DATABASE_URL': f'sqlite:///{db_path}',
+        'SQLALCHEMY_DATABASE_URI': f'sqlite:///{db_path}',
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
         'UPLOAD_FOLDER': tempfile.mkdtemp(),
         'WTF_CSRF_ENABLED': False,
     })
