@@ -8,10 +8,9 @@ import zipfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-# Import the module we're going to test (which hasn't been created yet)
-# This will fail until we create the module, which is expected in TDD approach
-# We'll uncomment these imports once we've implemented the modules
-# from app.utils.epub.processor import EPUBProcessor
+# Import the modules we're going to test
+from app.utils.epub.processor import EPUBProcessor
+# We'll uncomment these imports as we implement more tests
 # from app.utils.epub.metadata import MetadataExtractor
 # from app.utils.epub.content import ContentProcessor
 
@@ -102,7 +101,6 @@ class TestEPUBProcessor:
         os.remove(epub_path)
         os.rmdir(tmp_dir)
     
-    @pytest.mark.skip(reason="EPUBProcessor not implemented yet")
     def test_epub_extraction(self, sample_epub):
         """Test extracting contents from an EPUB file"""
         processor = EPUBProcessor()
@@ -121,7 +119,6 @@ class TestEPUBProcessor:
         processor.cleanup()
         assert not os.path.exists(extracted_path)
     
-    @pytest.mark.skip(reason="EPUBProcessor not implemented yet")
     def test_epub_validation(self, sample_epub):
         """Test validating an EPUB file"""
         processor = EPUBProcessor()
