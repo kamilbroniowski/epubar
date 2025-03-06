@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Upload EPUB | EPUBAR{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Upload EPUB Book</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('library.upload') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <div class="mb-3">
+                            <label for="epub_file" class="form-label">Select EPUB File</label>
+                            <input type="file" class="form-control" id="epub_file" name="epub_file" accept=".epub" required>
+                            <div class="form-text">Only EPUB (.epub) files are supported</div>
+                        </div>
+                        
+                        <div class="alert alert-info" id="processingInfo" style="display: none;">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div>
+                                    Processing EPUB file. This may take a moment...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="uploadButton">
+                                Upload Book
+                            </button>
+                            <a href="{{ url_for('library.index') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Supported Features</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Standard EPUB 2.0 and 3.0 files
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Embedded images and styles
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Table of contents and navigation
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Metadata extraction (title, author, etc.)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadButton = document.getElementById('uploadButton');
+        const processingInfo = document.getElementById('processingInfo');
+        
+        uploadForm.addEventListener('submit', function() {
+            uploadButton.disabled = true;
+            processingInfo.style.display = 'block';
+        });
+    });
+</script>
+{% endblock %}

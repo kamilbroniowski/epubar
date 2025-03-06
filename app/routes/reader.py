@@ -25,7 +25,7 @@ def read(book_id):
         reading_state = ReadingState(
             user_id=book.user_id,
             book_id=book.id,
-            current_position="0",
+            current_position="0:0",  # Format: spineIndex:elementIndex
             last_read_at=db.func.now()
         )
         db.session.add(reading_state)
@@ -49,17 +49,33 @@ def update_state(book_id):
     data = request.json
     
     reading_state = ReadingState.query.filter_by(
-        user_id=book.user_id, 
+        user_id=book.user_id,
         book_id=book.id
     ).first()
     
-    if reading_state:
-        if 'position' in data:
-            reading_state.current_position = data['position']
-        if 'is_finished' in data and data['is_finished']:
-            reading_state.is_finished = True
-        
-        reading_state.last_read_at = db.func.now()
-        db.session.commit()
-        
-    return jsonify({"status": "success"})
+    if not reading_state:
+        reading_state = ReadingState(
+            user_id=book.user_id,
+            book_id=book.id,
+            current_position="0:0",
+            last_read_at=db.func.now()
+        )
+        db.session.add(reading_state)
+    
+    # Update the reading state
+    if 'position' in data:
+        reading_state.current_position = data['position']
+    
+    if 'is_finished' in data:
+        reading_state.is_finished = data['is_finished']
+    
+    # Update the last read timestamp
+    reading_state.last_read_at = db.func.now()
+    
+    db.session.commit()
+    
+    return jsonify({
+        'status': 'success',
+        'position': reading_state.current_position,
+        'is_finished': reading_state.is_finished
+    })

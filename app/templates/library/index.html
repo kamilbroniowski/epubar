@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}My Library | EPUBAR{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>My Library</h1>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('library.upload') }}" class="btn btn-primary">
+                <i class="bi bi-upload"></i> Upload EPUB
+            </a>
+        </div>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for book in books %}
+        <div class="col">
+            <div class="card book-card h-100">
+                {% if book.cover_path %}
+                <img src="{{ url_for('api.get_book_cover', book_id=book.id) }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default-cover.jpg') }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                {% endif %}
+                
+                <div class="card-body book-info">
+                    <h5 class="card-title book-title text-truncate">{{ book.title }}</h5>
+                    <p class="card-text book-author">{{ book.author }}</p>
+                    
+                    {% if book.reading_state %}
+                    <div class="progress mb-2" style="height: 5px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ book.reading_state.progress_percent }}%;" 
+                             aria-valuenow="{{ book.reading_state.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="book-meta">
+                        {% if book.reading_state.is_finished %}
+                        <span class="badge bg-success">Finished</span>
+                        {% else %}
+                        <small>{{ book.reading_state.progress_percent }}% completed</small>
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{{ url_for('reader.read', book_id=book.id) }}" class="btn btn-outline-primary">
+                            {% if book.reading_state and not book.reading_state.is_finished %}
+                            Continue Reading
+                            {% else %}
+                            Read Book
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-muted">
+                    <small>Added {{ book.created_at|date }}</small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <p>Your library is empty. Start by uploading an EPUB book.</p>
+                <a href="{{ url_for('library.upload') }}" class="btn btn-primary">
+                    <i class="bi bi-upload"></i> Upload EPUB
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

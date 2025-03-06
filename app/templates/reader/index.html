@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} | EPUBAR Reader{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reader.css') }}">
+<style>
+    /* Reader-specific styles */
+    body {
+        overflow: hidden;
+    }
+    
+    .reader-container {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 126px);
+    }
+    
+    .reader-header {
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .reader-content {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .reader-footer {
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .page-content {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        height: 100%;
+        overflow-y: auto;
+    }
+    
+    .content-container {
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .pagination-container {
+        display: flex;
+        align-items: center;
+    }
+    
+    .page-info {
+        margin: 0 15px;
+    }
+    
+    /* Annotations */
+    .epubar-highlight {
+        background-color: rgba(255, 255, 0, 0.3);
+        cursor: pointer;
+    }
+    
+    .annotation-tooltip {
+        position: absolute;
+        background: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        max-width: 300px;
+        z-index: 1000;
+    }
+    
+    /* Theme control */
+    .theme-options {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        display: none;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+    
+    .theme-dark {
+        background-color: #222;
+        color: #eee;
+    }
+    
+    .theme-sepia {
+        background-color: #f4ecd8;
+        color: #5b4636;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reader-container">
+    <div class="reader-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h5 mb-0">{{ book.title }}</h1>
+            <div class="reader-controls">
+                <button id="settingsBtn" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-gear"></i> Settings
+                </button>
+                <div id="themeOptions" class="theme-options">
+                    <div class="mb-3">
+                        <label class="form-label">Theme</label>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm theme-btn" data-theme="light">Light</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm theme-btn" data-theme="dark">Dark</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm theme-btn" data-theme="sepia">Sepia</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fontSize" class="form-label">Font Size</label>
+                        <input type="range" class="form-range" id="fontSize" min="80" max="150" value="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="reader-content">
+        <div class="content-container">
+            <div id="bookContent" class="page-content">
+                <!-- EPUB content will be loaded here dynamically -->
+                <div class="text-center my-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading book content...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="reader-footer">
+        <button id="prevBtn" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Previous
+        </button>
+        <div class="pagination-container">
+            <span id="pageInfo" class="page-info">Page 1</span>
+        </div>
+        <button id="nextBtn" class="btn btn-primary">
+            Next <i class="bi bi-arrow-right"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Book metadata from the server
+    const bookId = {{ book.id }};
+    const bookPath = "{{ book.file_path }}";
+    const currentPosition = "{{ reading_state.current_position }}";
+    
+    // Annotations data
+    const annotations = [
+        {% for annotation in annotations %}
+        {
+            id: {{ annotation.id }},
+            start: "{{ annotation.start_position }}",
+            end: "{{ annotation.end_position }}",
+            text: "{{ annotation.text }}",
+            color: "{{ annotation.color }}",
+            created_at: "{{ annotation.created_at }}"
+        },
+        {% endfor %}
+    ];
+</script>
+<script src="{{ url_for('static', filename='js/reader.js') }}"></script>
+{% endblock %}

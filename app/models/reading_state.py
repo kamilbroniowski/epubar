@@ -2,7 +2,7 @@
 ReadingState model for tracking user reading progress
 """
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import relationship
 
 from app.models.db import db
@@ -16,6 +16,7 @@ class ReadingState(db.Model):
     book_id = Column(Integer, ForeignKey('books.id'), nullable=False)
     current_position = Column(String(255))  # Can store chapter/page info in structured format
     progress_percent = Column(Float, default=0.0)
+    is_finished = Column(Boolean, default=False)
     last_read_at = Column(DateTime, default=datetime.utcnow)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

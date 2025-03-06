@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}EPUBAR - EPUB Reader{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center my-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold">Welcome to EPUBAR</h1>
+            <p class="lead">Your modern EPUB reader for an enhanced reading experience.</p>
+            <p>Access your library, read your books, and manage your reading progress all in one place.</p>
+            <div class="d-grid gap-2 d-md-flex mt-4">
+                <a href="{{ url_for('library.index') }}" class="btn btn-primary btn-lg px-4 me-md-2">My Library</a>
+                <a href="{{ url_for('library.upload') }}" class="btn btn-outline-secondary btn-lg px-4">Upload Book</a>
+            </div>
+        </div>
+        <div class="col-md-6 d-none d-md-block">
+            <img src="{{ url_for('static', filename='images/reader-illustration.svg') }}" class="img-fluid" alt="EPUBAR Reader Illustration">
+        </div>
+    </div>
+    
+    <div class="row my-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Features</h2>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-book fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Full EPUB Support</h5>
+                    <p class="card-text">Read all your EPUB files with proper rendering of formatting, images, and tables.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-bookmark fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Annotations & Highlights</h5>
+                    <p class="card-text">Mark important passages, add notes, and organize your thoughts as you read.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-palette fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Customizable Reading</h5>
+                    <p class="card-text">Adjust themes, font sizes, and layout to create your perfect reading environment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if recent_books %}
+    <div class="row my-5">
+        <div class="col-12">
+            <h2 class="mb-4">Continue Reading</h2>
+        </div>
+        {% for book in recent_books %}
+        <div class="col-md-3 mb-4">
+            <div class="card book-card h-100">
+                <img src="{{ url_for('api.get_book_cover', book_id=book.id) }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                <div class="card-body book-info">
+                    <h5 class="card-title book-title text-truncate">{{ book.title }}</h5>
+                    <p class="card-text book-author">{{ book.author }}</p>
+                    <div class="progress mb-2" style="height: 5px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ book.reading_state.progress_percent }}%;" 
+                             aria-valuenow="{{ book.reading_state.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-grid mt-3">
+                        <a href="{{ url_for('reader.read', book_id=book.id) }}" class="btn btn-outline-primary btn-sm">Continue Reading</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
