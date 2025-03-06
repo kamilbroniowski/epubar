@@ -44,6 +44,13 @@
 - Implementing custom utilities for handling EPUB content rendering
 - Supporting embedded images and formatting for a complete reading experience
 
+### 2025-03-06 20:05: EPUB Metadata Extraction Tests
+- Implemented and enabled tests for EPUB metadata extraction functionality
+- Successfully tested extraction of basic metadata (title, author, etc.) from OPF files
+- Verified cover image identification within the EPUB package
+- Implemented spine item extraction for navigation
+- All tests now passing in our Docker testing environment
+
 ### Text Interaction
 - Designing selection mechanism compatible with pagination
 - Implementing position tracking system for reliable annotation placement

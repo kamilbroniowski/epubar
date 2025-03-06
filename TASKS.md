@@ -14,8 +14,8 @@
 
 - [x] Write tests for EPUB extraction functionality
 - [x] Implement EPUB extraction from ZIP archives
-- [ ] Write tests for OPF file parsing
-- [ ] Implement OPF parser for book metadata
+- [x] Write tests for OPF file parsing
+- [x] Implement OPF parser for book metadata
 - [ ] Write tests for HTML/CSS content processing
 - [ ] Implement HTML/CSS processor for rendering
 - [ ] Write tests for image handling
