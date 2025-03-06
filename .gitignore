@@ -170,10 +170,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Project-specific files
-MEMORY.md
-TASKS.md
-ISSUES.md
+# Project-specific files that should be ignored
+# Note: We are now tracking our documentation files
 
 # Database files
 *.db
