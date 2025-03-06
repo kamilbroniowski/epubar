@@ -169,3 +169,18 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Project-specific files
+MEMORY.md
+TASKS.md
+ISSUES.md
+
+# Database files
+*.db
+*.sqlite3
+
+# Uploaded EPUB files
+uploads/
+
+# Docker volumes
+data/
