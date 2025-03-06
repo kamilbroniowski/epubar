@@ -59,4 +59,5 @@ def db(app):
 @pytest.fixture
 def test_user(db):
     """Get the test user"""
-    return User.query.filter_by(username='testuser').first()
+    user = User.query.filter_by(username='testuser').first()
+    return user
