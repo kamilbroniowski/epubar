@@ -148,5 +148,5 @@ def upload():
 @library_bp.route('/book/<int:book_id>')
 def view_book(book_id):
     """View book details"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     return render_template('library/book_details.html', book=book)

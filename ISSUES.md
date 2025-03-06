@@ -49,6 +49,23 @@
 2. **Content Normalization**
    - Standardizing diverse HTML/CSS in EPUB files
    - Handling embedded fonts and styling
+
+## Fixed Issues
+
+1. **API Integration Issues**
+   - ✅ Fixed method name mismatch between code and tests (extract_spine → get_spine_items)
+   - ✅ Corrected API response key mismatch ('idref' → 'id') in book spine API routes
+   - ✅ Resolved content path construction in get_book_content route
+
+2. **Content Processing**
+   - ✅ Enhanced ContentProcessor to return complete HTML documents with proper html and body tags
+   - ✅ Fixed image path resolution in EPUB content
+
+3. **Test Environment Issues**
+   - ✅ Fixed 'safe_join' import error by importing from werkzeug.utils instead of flask
+   - ✅ Resolved path discrepancy in Docker container by updating paths in conftest.py
+   - ✅ Fixed database access error in reader tests by using db fixture directly
+   - ✅ Added missing 'sample_book' fixture to the testing configuration
    - Maintaining original formatting while enabling customization
 
 3. **Monochrome Design**

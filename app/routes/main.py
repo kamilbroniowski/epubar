@@ -24,7 +24,7 @@ def index():
         
     recent_books = []
     for state in recent_states:
-        book = Book.query.get(state.book_id)
+        book = db.session.get(Book, state.book_id)
         if book:
             # Add reading progress
             state_parts = state.current_position.split(':')

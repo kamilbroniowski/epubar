@@ -7,7 +7,7 @@ from app.models.book import Book
 from app.models.reading_state import ReadingState
 
 
-def test_reader_page_loads(client, app, test_user, sample_book):
+def test_reader_page_loads(client, app, test_user, sample_book, db):
     """Test that the reader page loads properly for a valid book"""
     with app.app_context():
         # Create a test book
@@ -18,8 +18,8 @@ def test_reader_page_loads(client, app, test_user, sample_book):
             file_path=sample_book,
             language="en"
         )
-        app.db.session.add(book)
-        app.db.session.commit()
+        db.session.add(book)
+        db.session.commit()
         
         # Create an initial reading state
         reading_state = ReadingState(
@@ -27,9 +27,8 @@ def test_reader_page_loads(client, app, test_user, sample_book):
             book_id=book.id,
             current_position="0:0"
         )
-        app.db.session.add(reading_state)
-        app.db.session.commit()
-        
+        db.session.add(reading_state)
+        db.session.commit() 
         # Test that the reader page loads
         response = client.get(f"/reader/{book.id}")
         assert response.status_code == 200
@@ -46,7 +45,7 @@ def test_reader_404_for_invalid_book(client):
     assert response.status_code == 404
 
 
-def test_api_get_book_spine(client, app, test_user, sample_book):
+def test_api_get_book_spine(client, app, test_user, sample_book, db):
     """Test the API endpoint for getting book spine"""
     with app.app_context():
         # Create a test book
@@ -57,8 +56,8 @@ def test_api_get_book_spine(client, app, test_user, sample_book):
             file_path=sample_book,
             language="en"
         )
-        app.db.session.add(book)
-        app.db.session.commit()
+        db.session.add(book)
+        db.session.commit()
         
         # Test the API endpoint
         response = client.get(f"/api/books/{book.id}/spine")
@@ -72,7 +71,7 @@ def test_api_get_book_spine(client, app, test_user, sample_book):
         assert json_data['book_id'] == book.id
 
 
-def test_api_get_book_content(client, app, test_user, sample_book):
+def test_api_get_book_content(client, app, test_user, sample_book, db):
     """Test the API endpoint for getting book content"""
     with app.app_context():
         # Create a test book
@@ -83,8 +82,8 @@ def test_api_get_book_content(client, app, test_user, sample_book):
             file_path=sample_book,
             language="en"
         )
-        app.db.session.add(book)
-        app.db.session.commit()
+        db.session.add(book)
+        db.session.commit()
         
         # First get the spine to find an item ID
         response = client.get(f"/api/books/{book.id}/spine")
@@ -105,7 +104,7 @@ def test_api_get_book_content(client, app, test_user, sample_book):
         assert '<html' in content.lower() or '<body' in content.lower()
 
 
-def test_update_reading_state(client, app, test_user, sample_book):
+def test_update_reading_state(client, app, test_user, sample_book, db):
     """Test updating the reading state"""
     with app.app_context():
         # Create a test book
@@ -116,8 +115,8 @@ def test_update_reading_state(client, app, test_user, sample_book):
             file_path=sample_book,
             language="en"
         )
-        app.db.session.add(book)
-        app.db.session.commit()
+        db.session.add(book)
+        db.session.commit()
         
         # Create an initial reading state
         reading_state = ReadingState(
@@ -125,8 +124,8 @@ def test_update_reading_state(client, app, test_user, sample_book):
             book_id=book.id,
             current_position="0:0"
         )
-        app.db.session.add(reading_state)
-        app.db.session.commit()
+        db.session.add(reading_state)
+        db.session.commit()
         
         # Update the reading state
         new_position = "1:150"

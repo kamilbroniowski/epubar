@@ -13,7 +13,7 @@ reader_bp = Blueprint('reader', __name__)
 @reader_bp.route('/<int:book_id>')
 def read(book_id):
     """Display the EPUB reader for a specific book"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     
     # Get or create reading state
     reading_state = ReadingState.query.filter_by(
@@ -45,7 +45,7 @@ def read(book_id):
 @reader_bp.route('/<int:book_id>/state', methods=['POST'])
 def update_state(book_id):
     """Update reading state for a book"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     data = request.json
     
     reading_state = ReadingState.query.filter_by(

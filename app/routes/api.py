@@ -3,7 +3,8 @@ API routes for EPUBAR application
 """
 import os
 import json
-from flask import Blueprint, jsonify, request, current_app, send_file, safe_join
+from flask import Blueprint, jsonify, request, current_app, send_file
+from werkzeug.utils import safe_join
 from app.models.db import db
 from app.models.book import Book
 from app.models.annotation import Annotation
@@ -62,7 +63,7 @@ def create_annotation():
 @api_bp.route('/annotations/<int:annotation_id>', methods=['DELETE'])
 def delete_annotation(annotation_id):
     """Delete an annotation"""
-    annotation = Annotation.query.get_or_404(annotation_id)
+    annotation = db.session.get_or_404(Annotation, annotation_id)
     
     db.session.delete(annotation)
     db.session.commit()
@@ -73,7 +74,7 @@ def delete_annotation(annotation_id):
 @api_bp.route('/books/<int:book_id>/spine', methods=['GET'])
 def get_book_spine(book_id):
     """Get the spine (table of contents) for a book"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     
     # Initialize the EPUB processor
     processor = EPUBProcessor()
@@ -89,13 +90,13 @@ def get_book_spine(book_id):
     opf_full_path = os.path.join(extracted_path, opf_path)
     
     # Extract spine items
-    spine_items = extractor.extract_spine(opf_full_path)
+    spine_items = extractor.get_spine_items(opf_full_path)
     
     # Format spine items for the API response
     result = []
     for i, item in enumerate(spine_items):
         result.append({
-            'id': item['idref'],
+            'id': item['id'],
             'index': i,
             'href': item['href'],
             'media_type': item.get('media-type', 'application/xhtml+xml'),
@@ -111,7 +112,7 @@ def get_book_spine(book_id):
 @api_bp.route('/books/<int:book_id>/content/<string:item_id>', methods=['GET'])
 def get_book_content(book_id, item_id):
     """Get the content for a specific spine item"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     
     # Initialize the EPUB processor
     processor = EPUBProcessor()
@@ -127,13 +128,13 @@ def get_book_content(book_id, item_id):
     opf_full_path = os.path.join(extracted_path, opf_path)
     
     # Extract spine items to find the requested one
-    spine_items = extractor.extract_spine(opf_full_path)
+    spine_items = extractor.get_spine_items(opf_full_path)
     
     # Find the requested item
     content_path = None
     for item in spine_items:
-        if item['idref'] == item_id:
-            content_path = os.path.join(opf_dir, item['href'])
+        if item['id'] == item_id:
+            content_path = os.path.join(extracted_path, item['href'])
             break
     
     if not content_path:
@@ -153,7 +154,7 @@ def get_book_content(book_id, item_id):
 @api_bp.route('/books/<int:book_id>/annotations', methods=['POST'])
 def create_book_annotation(book_id):
     """Create a new annotation for a book"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     data = request.json
     
     # Create the annotation
@@ -195,7 +196,7 @@ def delete_book_annotation(book_id, annotation_id):
 @api_bp.route('/books/<int:book_id>/cover', methods=['GET'])
 def get_book_cover(book_id):
     """Get the cover image for a book"""
-    book = Book.query.get_or_404(book_id)
+    book = db.session.get_or_404(Book, book_id)
     
     if not book.cover_path or not os.path.exists(book.cover_path):
         # Return a default cover

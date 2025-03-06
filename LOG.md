@@ -96,3 +96,63 @@
 - Created homepage with recent books section
 - Implemented responsive design for all screen sizes
 - Added metadata extraction on book upload
+
+### 2025-03-06 20:42: Reader State Management
+- Implemented complete reading state API endpoint in reader.py
+- Added position tracking with format "spineIndex:elementIndex"
+- Implemented "is_finished" flag for tracking book completion
+- Ensured timestamp updates on every state change
+- Created proper JSON response format for AJAX handlers
+
+### 2025-03-06 20:45: Test Suite for Reader
+- Implemented tests for reader page loading and API endpoints
+- Tested 404 response for invalid book IDs
+- Verified book spine and content retrieval functionality
+- Validated reading state update mechanism
+
+### 2025-03-06 21:05: Fixed Reader API and Content Processing Issues
+- Fixed API method name mismatch between code and tests (extract_spine → get_spine_items)
+- Corrected API response key mismatch ('idref' → 'id') in both API routes
+- Fixed content path construction in get_book_content route
+- Enhanced ContentProcessor to return complete HTML documents
+- All 29 tests now passing with only minor SQLAlchemy deprecation warnings
+- Created comprehensive test_reader.py with full test coverage
+- Implemented tests for reader page loading and 404 handling
+- Added API tests for book spine retrieval
+- Created tests for book content retrieval
+- Implemented reading state update testing
+- Ensured all tests verify both API functionality and database state
+
+### 2025-03-06 20:48: Documentation Updates
+- Updated README.md with detailed project structure and component descriptions
+- Added comprehensive information about the reader implementation
+- Created detailed descriptions of library components
+- Added testing instructions to README.md
+- Updated project architecture documentation
+- Improved API documentation for future reference
+
+## Known Issues and Workarounds
+
+### Docker Environment
+- Python 3.11+ compatibility issues with some dependencies
+- SQLite permissions when using Docker volumes
+- Missing 'safe_join' import in Flask (now moved to werkzeug)
+
+### Browser Compatibility
+- CSS grid layout may have issues in older browsers
+- Selection API behavior differences between browsers
+- Font rendering inconsistencies across platforms
+
+## Next Steps
+
+### Performance Optimization
+- Implement caching for processed EPUB content
+- Add lazy loading for book covers in library view
+- Optimize database queries for larger libraries
+
+### Feature Additions
+- Implement book search functionality
+- Add bookmarking capability
+- Create user preferences panel
+- Implement night reading mode with blue light reduction
+- Add statistics dashboard for reading habits

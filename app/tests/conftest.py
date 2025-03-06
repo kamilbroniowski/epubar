@@ -52,6 +52,16 @@ def runner(app):
     return app.test_cli_runner()
 
 @pytest.fixture
+def sample_epub():
+    """Path to the sample EPUB file used for testing"""
+    return '/app/app/tests/resources/great_gatsby.epub'
+
+@pytest.fixture
+def resources_dir():
+    """Path to the test resources directory"""
+    return '/app/app/tests/resources'
+
+@pytest.fixture
 def db(app):
     """Database session for testing"""
     with app.app_context():
@@ -62,3 +72,8 @@ def test_user(db):
     """Get the test user"""
     user = User.query.filter_by(username='testuser').first()
     return user
+
+@pytest.fixture
+def sample_book(sample_epub):
+    """Path to the sample book file used for testing"""
+    return sample_epub
