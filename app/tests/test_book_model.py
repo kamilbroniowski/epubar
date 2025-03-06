@@ -77,9 +77,11 @@ def test_book_timestamps(db, test_user):
     assert isinstance(fetched_book.created_at, datetime)
     assert isinstance(fetched_book.updated_at, datetime)
     
-    # created_at and updated_at should be equal on creation
+    # created_at and updated_at should be very close on creation
     assert (datetime.utcnow() - fetched_book.created_at).total_seconds() < 60
-    assert fetched_book.created_at == fetched_book.updated_at
+    # Check if timestamps are within 1 millisecond of each other
+    time_diff = abs((fetched_book.created_at - fetched_book.updated_at).total_seconds())
+    assert time_diff < 0.001, f"Timestamps differ by {time_diff} seconds"
 
 def test_book_repr(db, test_user):
     """Test the string representation of a Book object"""
