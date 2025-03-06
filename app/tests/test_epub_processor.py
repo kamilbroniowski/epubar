@@ -10,35 +10,32 @@ from unittest.mock import patch, MagicMock
 
 # Import the modules we're going to test
 from app.utils.epub.processor import EPUBProcessor
-# We'll uncomment these imports as we implement more tests
-# from app.utils.epub.metadata import MetadataExtractor
+from app.utils.epub.metadata import MetadataExtractor
+# We'll uncomment this import when we implement content processing tests
 # from app.utils.epub.content import ContentProcessor
 
-class TestEPUBProcessor:
-    """Test cases for EPUB extraction and validation"""
+@pytest.fixture
+def sample_epub():
+    """Create a minimal valid EPUB file for testing"""
+    tmp_dir = tempfile.mkdtemp()
+    epub_path = os.path.join(tmp_dir, 'sample.epub')
     
-    @pytest.fixture
-    def sample_epub(self):
-        """Create a minimal valid EPUB file for testing"""
-        tmp_dir = tempfile.mkdtemp()
-        epub_path = os.path.join(tmp_dir, 'sample.epub')
+    # Create a minimal EPUB structure
+    with zipfile.ZipFile(epub_path, 'w') as epub:
+        # Add mimetype file (must be first and uncompressed)
+        epub.writestr('mimetype', 'application/epub+zip', compress_type=zipfile.ZIP_STORED)
         
-        # Create a minimal EPUB structure
-        with zipfile.ZipFile(epub_path, 'w') as epub:
-            # Add mimetype file (must be first and uncompressed)
-            epub.writestr('mimetype', 'application/epub+zip', compress_type=zipfile.ZIP_STORED)
-            
-            # Add META-INF directory with container.xml
-            container_xml = '''<?xml version="1.0" encoding="UTF-8"?>
+        # Add META-INF directory with container.xml
+        container_xml = '''<?xml version="1.0" encoding="UTF-8"?>
             <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
                <rootfiles>
                   <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
                </rootfiles>
             </container>'''
-            epub.writestr('META-INF/container.xml', container_xml)
-            
-            # Add OPF file
-            opf_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        epub.writestr('META-INF/container.xml', container_xml)
+        
+        # Add OPF file
+        opf_content = '''<?xml version="1.0" encoding="UTF-8"?>
             <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="BookId">
                <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
                   <dc:title>Test Book</dc:title>
@@ -61,7 +58,7 @@ class TestEPUBProcessor:
             epub.writestr('OEBPS/content.opf', opf_content)
             
             # Add a chapter
-            chapter1 = '''<?xml version="1.0" encoding="UTF-8"?>
+        chapter1 = '''<?xml version="1.0" encoding="UTF-8"?>
             <html xmlns="http://www.w3.org/1999/xhtml">
                <head>
                   <title>Chapter 1</title>
@@ -98,8 +95,12 @@ class TestEPUBProcessor:
         yield epub_path
         
         # Cleanup
-        os.remove(epub_path)
-        os.rmdir(tmp_dir)
+    os.remove(epub_path)
+    os.rmdir(tmp_dir)
+
+
+class TestEPUBProcessor:
+    """Test cases for EPUB extraction and validation"""
     
     def test_epub_extraction(self, sample_epub):
         """Test extracting contents from an EPUB file"""
@@ -142,7 +143,6 @@ class TestEPUBProcessor:
 class TestMetadataExtractor:
     """Test cases for EPUB metadata extraction"""
     
-    @pytest.mark.skip(reason="MetadataExtractor not implemented yet")
     def test_extract_metadata_from_opf(self, sample_epub):
         """Test extracting metadata from an OPF file"""
         processor = EPUBProcessor()
@@ -168,7 +168,6 @@ class TestMetadataExtractor:
         # Clean up
         processor.cleanup()
     
-    @pytest.mark.skip(reason="MetadataExtractor not implemented yet")
     def test_get_spine_items(self, sample_epub):
         """Test extracting spine items for navigation"""
         processor = EPUBProcessor()
