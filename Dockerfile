@@ -1,12 +1,14 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt-dev \
-    libz-dev \
+    zlib1g-dev \
     libssl-dev \
     gcc \
+    libjpeg-dev \
+    libpng-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,8 +18,10 @@ WORKDIR /app
 # Copy requirements file
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies - use pip wheel to avoid compilation issues
+RUN pip install --upgrade pip && \
+    pip install wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
